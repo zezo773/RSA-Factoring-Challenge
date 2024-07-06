@@ -1,33 +1,39 @@
 #!/usr/bin/python3
-
-# library to get arguments
 import sys
 
+def is_prime(num):
+    if num < 2:
+        return False
+    for i in range(2, int(num**0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
 
-# fn unpack number factorial
-def fc():
-    """
-    function fc to search file to convert number and format n=p*q
-    """
+def factorize_rsa_number(n):
+    for i in range(2, n//2 + 1):
+        if n % i == 0 and is_prime(i) and is_prime(n // i):
+            return i, n // i
+    return None
+
+def factorize_rsa_file(file_path):
+
+    with open(file_path, 'r') as file:
+        n = int(file.read().strip())
+
+    factors = factorize_rsa_number(n)
+
+    if factors:
+        print(f"{n}={factors[1]}*{factors[0]}")
+    else:
+        print(f"No prime factorization found for {n}")
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: rsa <file>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
     try:
-        revfile = sys.argv[1]
-        with open(revfile) as f:
-            for revnumber in f:
-                revnumber = int(revnumber)
-                if revnumber % 2 == 0:
-                        print("{}={}*{}".format(revnumber, revnumber // 2, 2))
-                        continue
-                i = 3
-                while i < revnumber // 2:
-                    if revnumber % i == 0:
-                        print("{}={}*{}".format(revnumber, revnumber // i, i))
-                        break
-                    i = i + 2
-                if i == (revnumber // 2) + 1:
-                    print("{}={}*{}".format(revnumber, revnumber, 1))
-    except (IndexError):
-        pass
-
-
-# autostart
-fc()
+        factorize_rsa_file(file_path)
+    except Exception as e:
+        print(f"Error: {e}")
+        sys.exit(1)
